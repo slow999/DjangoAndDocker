@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import logging.config
+
+print('Beginning of settings.py')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,6 +30,55 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGGING_CONFIG = None
+
+# Declare project log file setting
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'standard': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S"
+        },
+    },
+    'handlers': {
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'mysite' + '.log',
+            'maxBytes': 1024 * 1024 * 15,  # 15MB
+            'backupCount': 10,
+            'formatter': 'standard',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['logfile', 'console'],
+            'propagate': True,
+            'level': 'WARN',
+        },
+        'mysite': {
+            'handlers': ['logfile', 'console'],
+            'level': 'DEBUG',
+        }
+    }
+})
 
 # Application definition
 

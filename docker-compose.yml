@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+
+  # nginx:
+  #   build: ./nginx
+  #   restart: always
+  #   volumes:
+  #     - web_data:/code
+  #   ports:
+  #     - "8888:80"
+  #   depends_on: 
+  #     - django
+
+  django:
+    build: ./web
+    restart: always
+    volumes:
+      - web_data:/code
+    command: uwsgi --ini /code/mysite.uwsgi.ini
+
+
+volumes:
+  web_data:
